@@ -14,13 +14,14 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
-public class DataLoaderCmd implements CommandLineRunner {
+public class DataLoader implements CommandLineRunner {
 
     private final MovieRepository movieRepository;
     private final StudioRepository studioRepository;
@@ -48,8 +49,8 @@ public class DataLoaderCmd implements CommandLineRunner {
             Integer year = Integer.parseInt(tokens[0].trim());
             String title = tokens[1].trim();
             String[] studiosArray = tokens[2].split(",");
-            String[] producersArray = tokens[3].split(",");
-            Boolean winner;
+            String producersString = tokens[3].trim();
+            boolean winner;
             try {
                 winner = tokens[4].trim().equalsIgnoreCase("yes");
             } catch (Exception e){
@@ -62,14 +63,11 @@ public class DataLoaderCmd implements CommandLineRunner {
                     .map(this::findOrCreateStudio)
                     .collect(Collectors.toList());
 
-            List<Producer> producers = Arrays.stream(producersArray)
-                    .map(String::trim)
-                    .filter(name -> !name.isEmpty())
-                    .map(this::findOrCreateProducer)
-                    .collect(Collectors.toList());
+            // Processa produtores com "," e "and"
+            List<Producer> producers = parseProducers(producersString);
 
             Movie movie = new Movie();
-            movie.setYear_movie(year);
+            movie.setYearMovie(year);
             movie.setTitle(title);
             movie.setWinner(winner);
             movie.setStudios(studios);
@@ -79,6 +77,31 @@ public class DataLoaderCmd implements CommandLineRunner {
         }
 
         reader.close();
+    }
+
+    private List<Producer> parseProducers(String producersString) {
+        List<Producer> producers = new ArrayList<>();
+
+        if (producersString == null || producersString.trim().isEmpty()) {
+            return producers;
+        }
+
+        // "Produtor A and Produtor B"
+        String[] producerGroups = producersString.split("\\s+and\\s+");
+
+        for (String group : producerGroups) {
+            // Separação por "," "Produtor A, Produtor B and Produtor C"
+            String[] individualProducers = group.split(",");
+
+            for (String producerName : individualProducers) {
+                String cleanName = producerName.trim();
+                if (!cleanName.isEmpty()) {
+                    producers.add(findOrCreateProducer(cleanName));
+                }
+            }
+        }
+
+        return producers;
     }
 
     private Studio findOrCreateStudio(String name) {

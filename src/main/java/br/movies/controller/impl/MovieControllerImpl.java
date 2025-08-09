@@ -1,20 +1,22 @@
 package br.movies.controller.impl;
 
-import br.movies.dto.ResponseDto;
-import br.movies.service.MovieService;
-import org.springframework.beans.factory.annotation.Autowired;
+import br.movies.dto.ProducerIntervalResponse;
+import br.movies.service.ProducerAwardIntervalService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+
 @RestController()
+@RequiredArgsConstructor
 public class MovieControllerImpl {
 
-    @Autowired
-    private MovieService movieService;
+    private final ProducerAwardIntervalService producerAwardIntervalService;
 
-    @GetMapping
-    public ResponseEntity<ResponseDto> getMovies(){
-        return null;
+    @GetMapping("/producers/awards-intervals")
+    public ResponseEntity<ProducerIntervalResponse> getProducerAwardIntervals() {
+        ProducerIntervalResponse response = producerAwardIntervalService.getProducerIntervals();
+        return ResponseEntity.ok(response);
     }
 }
