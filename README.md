@@ -5,16 +5,21 @@
 ### - Java 21+
 ### - Maven 3.6+
 
-# Run Application 
+## Database Configuration
+### Change the file in the project 
+```src/main/resources/Movielist.csv```
+
+
+## Run Application 
  
-## ```mvn spring-boot:run```
+### ```mvn spring-boot:run```
 
-# Run Tests
-## ```mvn test```
+## Run Tests
+### ```mvn test```
 
-# API
-## Endpoint ```GET /ws-movies/producers/awards-intervals```
+## API
+### Endpoint ```GET /ws-movies/producers/awards-intervals```
 
 
-# Testing 
-## ```curl http://localhost:8080/ws-movies/producers/awards-intervals```
+## Testing 
+### ```curl http://localhost:8080/ws-movies/producers/awards-intervals```
